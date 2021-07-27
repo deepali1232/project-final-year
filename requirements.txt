@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+seaborn
+plotly
+scikit-learn
+streamlit
+folium
+to download these libraries write in terminal python -m pip install -r requirements.txt
