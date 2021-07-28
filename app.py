@@ -3,8 +3,8 @@ import streamlit as st
 
 from datetime import datetime
 from re import T, U
-from sqlalchemy.orm import sessionmaker                                         
-from sqlalchemy import create_engine                                            
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker                                                                                  
 import pandas as pd                                                             
 import plotly.express as px
 import matplotlib as mpl
