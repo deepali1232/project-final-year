@@ -15,12 +15,14 @@ from database import Report
 from visualization import *                                                                                                                                                                                 
 from AnalyseData import Analyse   
 
-#--------------------------------------database connection---------------------------------------------------------------
-engine=create_engine('sqlite:///db.sqlite3')            #
-Session =sessionmaker(bind=engine)                      #
+#--------------------------------------database connection--------------------------------------------------
+
+engine=create_engine('sqlite:///db.sqlite3')            
+Session =sessionmaker(bind=engine)                      
 sess=Session()   
-                                       #
+                                       
 ######---------------------------------->>>>page- setup>>>>>-------------------------------#########
+
 st.set_page_config(page_title="COVID-19 WORLD VACCINATION PROGRESS VISUALIZATION",page_icon="🏥", layout="wide")
 sidebar=st.sidebar
 today=datetime.today()
@@ -30,6 +32,7 @@ st.sidebar.header('<i>Covid-19 World Vaccination Progress Visualization</i>',anc
 st.sidebar.image('image/tenor.gif',use_column_width=True)
 
 ######--------------------------->>>>>>>>>header>>>>>>>>>>>>>------------------------------#########
+
 with st.spinner("Loading Data..."):
     st.markdown("""
         <style>
@@ -79,6 +82,7 @@ with col2:
         st.markdown('<p class="content" style="float:right">MADE BY DIVYA SRIVASTAVA</P>',unsafe_allow_html=True)
 st.markdown("")
 st.markdown("_______")
+
 #-------------------------------------------------------choice 0--------------------------------------
 def AboutProject():
     with  st.spinner("Loading Data............"):
@@ -97,10 +101,11 @@ def AboutProject():
             </style>
             """, unsafe_allow_html=True)
         st.markdown('<p class ="head">About Project</p>',unsafe_allow_html=True) 
-        st.markdown('<p class="content"> My project is "Covid-19 World Vaccination Progress Visualization" .I can make a data analytics tool.It is helpful for people who want to get the summarize data for covid 19 vaccination progress .It is also helpful for many researchers ,programmers , health professionals and statistians that tracking the spread of virus in different regions of the world . The aim of this project is to  Track the progress of covid-19 vaccination , Vaccination progress and public sentiments about vaccines . Factors that influence vaccination - politics , demography , economy . The project aims to convey the analysis of different ongoing vaccination programs around the globe . The python libraries used in the exploratory data analysis include NumPy, Pandas, Matplotlib, Seaborn, and Plotly. The objectives of the following project includes  Which country started vaccinating its citizens first , Which country has the highest vaccinated people ?, What are the different categories of vaccines offered ? , Which vaccine is used by various countries ? </p>',unsafe_allow_html=True)
+        st.markdown('<p class="content"> My project is "Covid-19 World Vaccination Progress Visualization" .I can make a data analytics tool.  It is helpful for people who want to get the summarize data for covid 19 vaccination progress .It is also helpful for many researchers ,programmers , health professionals and statistians that tracking the spread of virus in different regions of the world . The aim of this project is to  -<li>Track the progress of covid-19 vaccination</li><li>Vaccination progress and public sentiments about vaccines </li><li>Factors that influence vaccination - politics , demography , economy </li> The project aims to convey the analysis of different ongoing vaccination programs around the globe . The python libraries used in the exploratory data analysis include :-<li>NumPy</li><li>Pandas</li><li>Matplotlib</li><li>folium</li><li>Plotly</li> The objectives of the following project includes <li> Which country started vaccinating its citizens first ?</li><li> Which country has the highest vaccinated people ?</li><li> What are the different categories of vaccines offered ?</li><li> Which vaccine is used by various countries ?</li> </p>',unsafe_allow_html=True)
         st.markdown("_____________________________________________________________________________")
 
 #-----------------------------choice 1--------------------------------------------------#
+
 def viewDataset():
     with  st.spinner("Loading Data............"):
         st.markdown(""" 
@@ -119,7 +124,7 @@ def viewDataset():
             """, unsafe_allow_html=True)
       
         st.markdown('<p class="head"> DataSet Used In This Project  </p>',unsafe_allow_html=True)
-        st.sidebar.markdown('<p class="content">This dataset is belongs to vaccination progress of different country  and the vaccine manufacturers in the world which help the peoples who want to get the summarize data of vaccination progress.These datasets we are taken from kaggle website.Here is the link: https://www.kaggle.com/</p>',unsafe_allow_html=True)
+        st.markdown('<p class="content">This dataset is belongs to vaccination progress of different country  and the vaccine manufacturers in the world which help the peoples who want to get the summarize data of vaccination progress.These datasets we are taken from kaggle website.Here is the link: https://www.kaggle.com/</p>',unsafe_allow_html=True)
         datasets=['Country Data','Manufacturers Data']
         selData=st.selectbox(options=datasets,label='Select Dataset to View')
         if selData == datasets[0]:
@@ -169,19 +174,20 @@ def showDetails(dataframe):
                 cols[3].markdown(f"## {t}")
                 st.markdown("___")       
         
-#----------------------------------analyse manufactures------choice 2------------------------------------------------------
+#----------------------------------------choice 2------------------------------------------------------
 def analyseManufacturers():
 
     st.header('Vaccine Manufacturers Total Count')
 
     data = analysis_mnf.getMnfCount()
-    st.plotly_chart(plotBar(data, "Pfizer is the most popular Vaccine Manufacturer",
-                            "No. of Vaccinations", "Manufacturer"), use_container_width=True)
+    st.plotly_chart(plotBar(data, "Pfizer is the most popular Vaccine Manufacturer","No. of Vaccinations", "Manufacturer"), use_container_width=True)
 
     st.header('Increase in Vaccine Manufacturing over time')
     st.image('plotImages/man_line.png', use_column_width=True)
+    st.markdown("---------------------------")
 
-#------------------------------------------------------------choice 3------------------------
+#------------------------------------------------------------choice 3----------------------------------
+
 def countrywiseAnalysis():
 
     st.header('Overall Total Vaccinations')
@@ -249,7 +255,9 @@ def countrywiseAnalysis():
 
     st.header('Vaccination done per 100 in Countries')
     st.image('plotImages/total_per100_line.png', use_column_width=True)
+    st.markdown("-----------------------------")
 
+#-----------------------------------------choice 4-----------------------------------------------
 
 def vaccineAnalysis():
     st.header('Country Vaccinations with respect to vaccine Manufacturer')
@@ -280,11 +288,10 @@ def vaccineAnalysis():
     st.markdown("---")
 
 
-#sidebar header----------------------
+#----------------------------------sidebar header----------------------
 
 sidebar.header('Choose Your Option')
-options = ['About Project','View Dataset', 'Analyse Manufacturers',
-           'Analyse Country', 'Analyse Country By Vaccine']
+options = ['About Project','View Dataset', 'Analyse Manufacturers','Analyse Country', 'Analyse Country By Vaccine']
 choice = sidebar.selectbox(options=options, label="Choose Action")
 
 with st.spinner("Please Wait for Some Time..."):
