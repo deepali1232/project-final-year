@@ -31,6 +31,7 @@ sidebar.write(d)
 st.sidebar.header('<i>Covid-19 World Vaccination Progress Visualization</i>',anchor="vaccination progress",)
 st.sidebar.image('image/tenor.gif',use_column_width=True)
 
+
 ######--------------------------->>>>>>>>>header>>>>>>>>>>>>>------------------------------#########
 
 with st.spinner("Loading Data..."):
