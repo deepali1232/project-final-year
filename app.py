@@ -1,19 +1,27 @@
 ######----------------------->>>>>>>>>>>>>import libraries>>>>>>>>>>>>-------------------##########
+import streamlit as st                                                     
 
 from datetime import datetime
 from re import T, U
-import streamlit as st
-import pandas as pd                                    #data processing ,csv file i/o eg->pd.read_csv
+from sqlalchemy.orm import sessionmaker                                         
+from sqlalchemy import create_engine                                            
+import pandas as pd                                                             
 import plotly.express as px
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import folium
 from streamlit_folium import folium_static
 from traitlets.traitlets import TraitType
+from database import Report                                                       
+from visualization import *                                                                                                                                                                                 
+from AnalyseData import Analyse   
 
-
+#--------------------------------------database connection---------------------------------------------------------------
+engine=create_engine('sqlite:///db.sqlite3')            #
+Session =sessionmaker(bind=engine)                      #
+sess=Session()   
+                                       #
 ######---------------------------------->>>>page- setup>>>>>-------------------------------#########
-
 st.set_page_config(page_title="COVID-19 WORLD VACCINATION PROGRESS VISUALIZATION",page_icon="🏥", layout="wide")
 sidebar=st.sidebar
 today=datetime.today()
@@ -72,12 +80,10 @@ with col2:
         st.markdown('<p class="content" style="float:right">MADE BY DIVYA SRIVASTAVA</P>',unsafe_allow_html=True)
 st.markdown("")
 st.markdown("_______")
-
-#-----------------------------data-set-detail--------------------------------------------------#
-df=pd.read_csv("dataset\country_vaccination.csv",parse_dates=['date'],dayfirst=True,index_col='date')
-df.drop(['iso_code','vaccines','source_name','source_website'],axis=1,inplace=True)
-df.fillna(value=0,inplace=True)
-st.markdown(""" 
+#-------------------------------------------------------choice 0--------------------------------------
+def AboutProject():
+    with  st.spinner("Loading Data............"):
+        st.markdown(""" 
             <style>
                 .head{
                     font-family: Calibri, Book Antiqua; 
@@ -91,27 +97,42 @@ st.markdown("""
                     }
             </style>
             """, unsafe_allow_html=True)
-@st.cache(suppress_st_warning=True)
-def viewDataset(pathlist):
-    with st.spinner("loading data....."):
-        st.markdown("")
-#--------------------------about section---------------------------------------------#
-st.sidebar.header("Options")
-if st.sidebar.checkbox("About Project"):
-    st.markdown('<p class ="head">About Project</p>',unsafe_allow_html=True) 
-    st.markdown('<p class="content"> My project is "COVID-19 WORLD VACCINATION PROGRESS VISUALIZATION" .I can make a data analytics tool.It is helpful for people who want to get the summarize data for covid 19 vaccination progress .It is also helpful for many researchers ,programmers , health professionals and statistians that tracking the spread of virus in different regions of the world . The aim of this project is to  Track the progress of covid-19 vaccination , Vaccination progress and public sentiments about vaccines . Factors that influence vaccination - politics , demography , economy . The project aims to convey the analysis of different ongoing vaccination programs around the globe . The python libraries used in the exploratory data analysis include NumPy, Pandas, Matplotlib, Seaborn, and Plotly. The objectives of the following project includes  Which country started vaccinating its citizens first , Which country has the highest vaccinated people ?, What are the different categories of vaccines offered ? , Which vaccine is used by various countries ? </p>',unsafe_allow_html=True)
-    st.markdown("_____________________________________________________________________________")
+        st.markdown('<p class ="head">About Project</p>',unsafe_allow_html=True) 
+        st.markdown('<p class="content"> My project is "Covid-19 World Vaccination Progress Visualization" .I can make a data analytics tool.It is helpful for people who want to get the summarize data for covid 19 vaccination progress .It is also helpful for many researchers ,programmers , health professionals and statistians that tracking the spread of virus in different regions of the world . The aim of this project is to  Track the progress of covid-19 vaccination , Vaccination progress and public sentiments about vaccines . Factors that influence vaccination - politics , demography , economy . The project aims to convey the analysis of different ongoing vaccination programs around the globe . The python libraries used in the exploratory data analysis include NumPy, Pandas, Matplotlib, Seaborn, and Plotly. The objectives of the following project includes  Which country started vaccinating its citizens first , Which country has the highest vaccinated people ?, What are the different categories of vaccines offered ? , Which vaccine is used by various countries ? </p>',unsafe_allow_html=True)
+        st.markdown("_____________________________________________________________________________")
 
-#------------------------------------if checkbox true then dataset open--------------------------------------#
-
-if st.sidebar.checkbox('View Dataset'):
+#-----------------------------choice 1--------------------------------------------------#
+def viewDataset():
+    with  st.spinner("Loading Data............"):
+        st.markdown(""" 
+            <style>
+                .head{
+                    font-family: Calibri, Book Antiqua; 
+                    font-size:4vh;
+                    padding-top:2%;
+                    padding-bottom:2%;
+                    font-weight:light;
+                    color:#ffc68a;
+                    #text-align:center;
+                    
+                    }
+            </style>
+            """, unsafe_allow_html=True)
+      
         st.markdown('<p class="head"> DataSet Used In This Project  </p>',unsafe_allow_html=True)
-        st.sidebar.markdown('<p class="content">This dataset is belongs to vaccination progress of different countries from 02-12-2020 till now which help the peoples who want to get the summarize data of vaccination progress.</p>',unsafe_allow_html=True)
-        st.dataframe(df)
+        st.sidebar.markdown('<p class="content">This dataset is belongs to vaccination progress of different country  and the vaccine manufacturers in the world which help the peoples who want to get the summarize data of vaccination progress.These datasets we are taken from kaggle website.Here is the link: https://www.kaggle.com/</p>',unsafe_allow_html=True)
+        datasets=['Country Data','Manufacturers Data']
+        selData=st.selectbox(options=datasets,label='Select Dataset to View')
+        if selData == datasets[0]:
+            dataframe = analysis_cnt.getDataframe()
+            showDetails(dataframe)
+        elif selData == datasets[1]:
+            dataframe = analysis_mnf.getDataframe()
+            showDetails(dataframe)
 
-#------------------------------------if checkbox true then dataset details open-------------------------------#
-if st.sidebar.checkbox('View dataset details'):        
-    st.markdown(""" 
+def showDetails(dataframe):
+    with st.spinner("Loading data.........."):
+        st.markdown(""" 
                 <style>
                     .block{
                             font-family: Book Antiqua; 
@@ -122,35 +143,186 @@ if st.sidebar.checkbox('View dataset details'):
                         }
                 </style>
                     """, unsafe_allow_html=True)
+        st.dataframe(dataframe[:5000])
+        st.markdown('<p class="head"> Number of rows and columns in dataset </p>',unsafe_allow_html=True)
+        cols = st.beta_columns(4)
+        cols[0].markdown('<p class="block"> Number of Rows : <br> </p>', unsafe_allow_html=True)
+        cols[1].markdown(f"# {dataframe.shape[0]}")
+        cols[2].markdown('<p class= "block"> Number of Columns : <br></p>', unsafe_allow_html=True)
+        cols[3].markdown(f"# {dataframe.shape[1]}")
+        st.markdown('---')
 
-    st.markdown('<p class="head"> Number of rows and columns in dataset </p>',unsafe_allow_html=True)
-    cols = st.beta_columns(4)
-    cols[0].markdown(
-                '<p class="block"> Number of Rows : <br> </p>', unsafe_allow_html=True)
-    cols[1].markdown(f"# {df.shape[0]}")
-    cols[2].markdown(
-                '<p class= "block"> Number of Columns : <br></p>', unsafe_allow_html=True)
-    cols[3].markdown(f"# {df.shape[1]}")
-    st.markdown('---')
+        st.markdown('<p class= "head"> Summary </p>', unsafe_allow_html=True)
+        st.markdown("")
+        st.dataframe(dataframe.describe())
+        st.markdown('---')
 
-    st.markdown('<p class= "head"> Summary </p>', unsafe_allow_html=True)
-    st.markdown("")
-    st.dataframe(df.describe())
-    st.markdown('---')
-
-    types = {'object': 'Categorical',
+        types = {'object': 'Categorical',
                     'int64': 'Numerical', 'float64': 'Numerical'}
-    types = list(map(lambda t: types[str(t)], df.dtypes))
-    st.markdown('<p class="head">Dataset Columns</p>',
-                        unsafe_allow_html=True)
-    for col, t in zip(df.columns, types):
+        types = list(map(lambda t: types[str(t)], dataframe.dtypes))
+        st.markdown('<p class="head">Dataset Columns</p>',unsafe_allow_html=True)
+        for col, t in zip(dataframe.columns, types):
                 st.markdown(f"## {col}")
                 cols = st.beta_columns(4)
                 cols[0].markdown('#### Unique Values :')
-                cols[1].markdown(f"## {df[col].unique().size}")
+                cols[1].markdown(f"## {dataframe[col].unique().size}")
                 cols[2].markdown('#### Type :')
                 cols[3].markdown(f"## {t}")
-                st.markdown("___")
+                st.markdown("___")       
+        
+#----------------------------------analyse manufactures------choice 2------------------------------------------------------
+def analyseManufacturers():
+
+    st.header('Vaccine Manufacturers Total Count')
+
+    data = analysis_mnf.getMnfCount()
+    st.plotly_chart(plotBar(data, "Pfizer is the most popular Vaccine Manufacturer",
+                            "No. of Vaccinations", "Manufacturer"), use_container_width=True)
+
+    st.header('Increase in Vaccine Manufacturing over time')
+    st.image('plotImages/man_line.png', use_column_width=True)
+
+#------------------------------------------------------------choice 3------------------------
+def countrywiseAnalysis():
+
+    st.header('Overall Total Vaccinations')
+    data = analysis_cnt.getCountryVaccinations()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations','Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries','Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Total People Vaccinated')
+    data = analysis_cnt.getPeopleVaccinated()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated',
+                             'Country Name', 'No. of Vaccinations'), use_container_width=True)
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(
+        data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+    st.markdown("---")
+
+    st.header('Total Fully Vaccinated People')
+    data = analysis_cnt.getPeopleFullyVaccinated()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People','Country Name', 'No. of Vaccinations'), use_container_width=True)
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+    st.markdown("---")
+
+    st.header('Overall Total Vaccinations')
+    data = analysis_cnt.getCountryVaccinations_100()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations','Country Name', 'No. of Vaccinations'), use_container_width=True)
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries',
+                                   'Country Name', 'No. of Vaccinations'), use_container_width=True)
+    st.markdown("---")
+
+    st.header('Total People Vaccinated')
+    data = analysis_cnt.getPeopleVaccinated_100()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated','Country Name', 'No. of Vaccinations'), use_container_width=True)
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+    st.markdown("---")
+
+    st.header('Total Fully Vaccinated People')
+    data = analysis_cnt.getPeopleFullyVaccinated_100()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People','Country Name', 'No. of Vaccinations'), use_container_width=True)
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Daily Vaccinations in Countries')
+    st.image('plotImages/daily_vacc_line.png', use_column_width=True)
+
+    st.header('Fully Vaccinated Peoples in Countries')
+    st.image('plotImages/fully_vacc_line.png', use_column_width=True)
+
+    st.header('No. of Vaccinated People in Countries')
+    st.image('plotImages/people_vacc_line.png', use_column_width=True)
+
+    st.header('Total Vaccinations done in Countries')
+    st.image('plotImages/total_vacc_line.png', use_column_width=True)
+
+    st.header('Vaccination done per 100 in Countries')
+    st.image('plotImages/total_per100_line.png', use_column_width=True)
+
+
+def vaccineAnalysis():
+    st.header('Country Vaccinations with respect to vaccine Manufacturer')
+    selVaccine = st.selectbox(options=analysis_cnt.getVaccines(), label="Choose vaccine to continue")
+
+    st.header('Overall Total Vaccinations')
+    data = analysis_cnt.getCountryVaccinations_vaccine(selVaccine)
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations','Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries','Country Name', 'No. of Vaccinations'), use_container_width=True)
+    st.markdown("---")
+
+    st.header('Total People Vaccinated')
+    data = analysis_cnt.getPeopleVaccinated_vaccine(selVaccine)
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated','Country Name', 'No. of Vaccinations'), use_container_width=True)
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+    st.markdown("---")
+
+    st.header('Total Fully Vaccinated People')
+    data = analysis_cnt.getPeopleFullyVaccinated_vaccine(selVaccine)
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People','Country Name', 'No. of Vaccinations'), use_container_width=True)
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+    st.markdown("---")
+
+
+#sidebar header----------------------
+
+sidebar.header('Choose Your Option')
+options = ['About Project','View Dataset', 'Analyse Manufacturers',
+           'Analyse Country', 'Analyse Country By Vaccine']
+choice = sidebar.selectbox(options=options, label="Choose Action")
+
+with st.spinner("Please Wait for Some Time..."):
+    analysis_mnf = Analyse("datasets\manufacturer.csv")
+    analysis_cnt = Analyse("datasets\country.csv")
+
+    if choice == options[0]:
+        AboutProject()
+    elif choice ==  options[1]:
+        viewDataset()
+    elif choice == options[2]:
+        analyseManufacturers()
+    elif choice == options[3]:
+        countrywiseAnalysis()
+    elif choice == options[4]:
+        vaccineAnalysis()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#--------------------------about section---------------------------------------------#
+
+
+
 
 #---------------------------------------univariate -column- selection---------------------------------# 
 if st.sidebar.checkbox('Univariate analysis '):
