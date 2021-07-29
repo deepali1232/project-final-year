@@ -312,25 +312,6 @@ with st.spinner("Please Wait for Some Time..."):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #---------------------------------------univariate -column- selection---------------------------------# 
 df=pd.read_csv('datasets\country.csv',parse_dates=['date'],dayfirst=True,index_col="date",)
 df.drop(['iso_code','vaccines','source_name','source_website'],axis=1,inplace=True)
