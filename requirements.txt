@@ -7,3 +7,4 @@ streamlit==0.85.1
 folium==0.12.1
 pip==21.2.1
 sqlalchemy==1.2.2
+streamlit-folium==0.4.0
