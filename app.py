@@ -311,7 +311,7 @@ with st.spinner("Please Wait for Some Time..."):
         vaccineAnalysis()
 
 #---------------------------------------univariate -column- selection---------------------------------# 
-df=pd.read_csv('datasets\country.csv',parse_dates=['date'],dayfirst=True,index_col="date",)
+df=pd.read_csv(r'datasets/country.csv',parse_dates=['date'],dayfirst=True,index_col="date",)
 df.drop(['iso_code','vaccines','source_name','source_website'],axis=1,inplace=True)
 df.fillna(value=0,inplace=True)
 st.sidebar.header('Choose Actions')
