@@ -296,9 +296,9 @@ options = ['About Project','View Dataset', 'Analyse Manufacturers','Analyse Coun
 choice = sidebar.selectbox(options=options, label="Choose Action")
 
 with st.spinner("Please Wait for Some Time..."):
-    
-    analysis_cnt = Analyse("datasets\country.csv")
     analysis_mnf = Analyse("datasets\manufacturer.csv")
+    analysis_cnt = Analyse("datasets\country.csv")
+    
     if choice == options[0]:
         AboutProject()
     elif choice ==  options[1]:
