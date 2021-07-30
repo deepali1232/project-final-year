@@ -9,6 +9,7 @@ import plotly.express as px
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import folium
+from streamlit.hashing import UnhashableTypeError
 from streamlit_folium import folium_static
 from traitlets.traitlets import TraitType
 from database import Report                                                       
@@ -24,7 +25,7 @@ sess=Session()
 
 #_______________________________________________Sidebar Report Generation and Save Report___________________________________________________
 
-current_report = dict().fromkeys(['title', 'img_name', 'save_report'])
+current_report = dict().fromkeys(['title', 'img_name', 'save_report'],)
 def generateReport():
     sidebar.header("Save Report")
     current_report['title'] = sidebar.text_input('Report Title')
@@ -38,10 +39,10 @@ def save_report_form(fig):
             try:
                 path = 'reports/'+current_report['img_name']+'.png'
                 fig.write_image(path)
-                report = Report(
-                    title=current_report['title'],img_name=path)
-                sess.add(report)
-                sess.commit()
+               # report = Report(
+                #    title=current_report['title'],img_name=path)
+                  #  sess.add(report)
+                 #   sess.commit()
                 st.success('Report Saved')
             except Exception as e:
                 st.error('Something went Wrong')
@@ -219,11 +220,12 @@ def analyseManufacturers():
     st.header('Vaccine Manufacturers Total Count')
 
     data = analysis_mnf.getMnfCount()
-    st.plotly_chart(plotBar(data, "Pfizer is the most popular Vaccine Manufacturer","No. of Vaccinations", "Manufacturer"), use_container_width=True)
+    fig = plotBar(data, "Pfizer is the most popular Vaccine Manufacturer","No. of Vaccinations", "Manufacturer")
+    st.plotly_chart(fig, use_container_width=True)
 #-----------------------------------------------------------------------------------------
     save_this_report = st.checkbox("Save Report", key='1')
     if save_this_report:
-                save_report_form(data)
+                save_report_form(fig)
 
     st.header('Increase in Vaccine Manufacturing over time')
     fig=st.image('plotImages/man_line.png', use_column_width=True)
