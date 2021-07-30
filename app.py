@@ -65,7 +65,7 @@ with st.spinner("loading data...."):
 st.markdown('<h1 class="mainhead"> <i>Covid-19 World Vaccination Progress Visualization</i> </h1> ',unsafe_allow_html=True)
 col1,col2=st.beta_columns([5,10])
 with col1:
-    st.image('image/tenor (1).gif',width=300,)
+    st.image('image/tenor (1).gif',use_column_width=True)
 with col2:
     col=st.beta_container()
     with col:
@@ -79,7 +79,7 @@ with col2:
                                     margin-left:5%;}
                     </style>
                     """, unsafe_allow_html=True)
-        st.markdown('<p class="content">Hey There ! <br> Welcome To My Project.This Project is all about Covid-19 World Vaccination Progress Visualization.<BR>We will be analyzing the vaccination progress across the world on the basis of country,dates,total vaccinations,people daily vaccinated total vaccinated per hundred,fully vaccinated per million.<br>Our motive is to give you idea about the vaccination progress ,how many peoples are vaccinated ,how many of left.<br>One last tip,if you are on a mobile device,switch over to landscape for viewing ease.Give it a go!</p>',unsafe_allow_html=True )
+        st.markdown('<p class="content">Hey There ! <br> Welcome To My Project.This Project is all about Covid-19 World Vaccination Progress Visualization.We will be analyzing the vaccination progress across the world on the basis of country and manufacturer dataset.<br>Our motive is to give you idea about the vaccination progress ,how many peoples are vaccinated ,how many of left.<br>One last tip,if you are on a mobile device,switch over to landscape for viewing ease. Give it a go!</p>',unsafe_allow_html=True )
         st.markdown('<p class="content" style="float:right">MADE BY DIVYA SRIVASTAVA</P>',unsafe_allow_html=True)
 st.markdown("")
 st.markdown("_______")
