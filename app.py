@@ -20,15 +20,72 @@ from AnalyseData import Analyse
 engine=create_engine('sqlite:///db.sqlite3')            
 Session =sessionmaker(bind=engine)                      
 sess=Session()   
-                                       
+
+
+#_______________________________________________Sidebar Report Generation and Save Report___________________________________________________
+#...conti
+current_report = dict().fromkeys(
+    ['title', 'desc', 'img_name', 'save_report'], "")
+
+
+def generateReport():
+    sidebar.header("Save Report")
+    current_report['title'] = sidebar.text_input('Report Title')
+    current_report['desc'] = sidebar.text_input('Report Description')
+    current_report['img_name'] = sidebar.text_input('Image Name')
+    current_report['save_report'] = sidebar.button("Save Report")
+
+
+def save_report_form(fig):
+    generateReport()
+    if current_report['save_report']:
+        with st.spinner("Saving Report..."):
+            try:
+                path = 'reports/'+current_report['img_name']+'.png'
+                fig.write_image(path)
+                report = Report(
+                    title=current_report['title'], desc=current_report['desc'], img_name=path)
+                sess.add(report)
+                sess.commit()
+                st.success('Report Saved')
+            except Exception as e:
+                st.error('Something went Wrong')
+                print(e)
+
+
+
+
+
+
 ######---------------------------------->>>>page- setup>>>>>-------------------------------#########
 
+
+
+
 st.set_page_config(page_title="COVID-19 WORLD VACCINATION PROGRESS VISUALIZATION",page_icon="🏥", layout="wide")
+st.markdown(" ")
 sidebar=st.sidebar
 today=datetime.today()
 d=today.strftime("%B %d,%Y %H:%M:%S")
 sidebar.write(d)
-st.sidebar.header('<i>Covid-19 World Vaccination Progress Visualization</i>',anchor="vaccination progress",)
+st.markdown(" ")
+sidebar.markdown("""
+<style> 
+    .sidehead{
+        float:right;
+        font-family: Book Antiqua ; 
+        color :white; 
+        margin-top:-15% !important;
+    }
+    
+    h1{
+        font-weight:light;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+sidebar.markdown('<h1 class="sidehead"><i>Covid-19 World Vaccination Progress Visualization</i></h1>',unsafe_allow_html=True)
 st.sidebar.image('image/tenor.gif',use_column_width=True)
 
 
@@ -182,9 +239,17 @@ def analyseManufacturers():
 
     data = analysis_mnf.getMnfCount()
     st.plotly_chart(plotBar(data, "Pfizer is the most popular Vaccine Manufacturer","No. of Vaccinations", "Manufacturer"), use_container_width=True)
+#-----------------------------------------------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='1')
+    if save_this_report:
+                save_report_form(data)
 
     st.header('Increase in Vaccine Manufacturing over time')
-    st.image('plotImages/man_line.png', use_column_width=True)
+    fig=st.image('plotImages/man_line.png', use_column_width=True)
+#--------------------------------------------------------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='2')
+    if save_this_report:
+                save_report_form(fig)
     st.markdown("---------------------------")
 
 #------------------------------------------------------------choice 3----------------------------------
@@ -194,68 +259,144 @@ def countrywiseAnalysis():
     st.header('Overall Total Vaccinations')
     data = analysis_cnt.getCountryVaccinations()
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations','Country Name', 'No. of Vaccinations'))
-
+#---------------------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='3')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("-------------------------------")
+#-----------------------------------------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries','Country Name', 'No. of Vaccinations'))
+    
+    #-----------------------------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='4')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
-
+#----------------------------------------------------------------------------
     st.header('Total People Vaccinated')
     data = analysis_cnt.getPeopleVaccinated()
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated',
                              'Country Name', 'No. of Vaccinations'), use_container_width=True)
-
-    st.text("")
-    st.plotly_chart(plotChloropeth(
-        data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+#------------------------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='5')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
-
+#-----------------------------------------------------------
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+#-----------------------------------------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='6')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("---")
+#-------------------------------------------------------
     st.header('Total Fully Vaccinated People')
     data = analysis_cnt.getPeopleFullyVaccinated()
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People','Country Name', 'No. of Vaccinations'), use_container_width=True)
-
+#--------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='7')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("------------------")
+#--------------------------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+#-----------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='8')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
 
     st.header('Overall Total Vaccinations')
     data = analysis_cnt.getCountryVaccinations_100()
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations','Country Name', 'No. of Vaccinations'), use_container_width=True)
-
+#----------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='9')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("---------------------")
+#---------------------------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries',
                                    'Country Name', 'No. of Vaccinations'), use_container_width=True)
+##----------------------------
+    save_this_report = st.checkbox("Save Report", key='10')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
-
+#---------------------------------------
     st.header('Total People Vaccinated')
     data = analysis_cnt.getPeopleVaccinated_100()
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated','Country Name', 'No. of Vaccinations'), use_container_width=True)
-
+#-------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='11')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("--------------")
+#----------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+#----------------------------------------
+    save_this_report = st.checkbox("Save Report", key='12')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
-
+#-----------------------------------------------
     st.header('Total Fully Vaccinated People')
     data = analysis_cnt.getPeopleFullyVaccinated_100()
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People','Country Name', 'No. of Vaccinations'), use_container_width=True)
-
+#---------------------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='13')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("---------------------------")
+#------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+#--------------------------------------
+    save_this_report = st.checkbox("Save Report", key='14')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
-
+#------------------------------
     st.header('Daily Vaccinations in Countries')
-    st.image('plotImages/daily_vacc_line.png', use_column_width=True)
-
+    fig=st.image('plotImages/daily_vacc_line.png', use_column_width=True)
+#========================================
+    save_this_report = st.checkbox("Save Report", key='15')
+    if save_this_report:
+                save_report_form(fig)
+    st.markdown("-----------------------")
     st.header('Fully Vaccinated Peoples in Countries')
-    st.image('plotImages/fully_vacc_line.png', use_column_width=True)
-
+    fig=st.image('plotImages/fully_vacc_line.png', use_column_width=True)
+#---------------------------------------
+    save_this_report = st.checkbox("Save Report", key='16')
+    if save_this_report:
+                save_report_form(fig)
+    st.markdown("-------------------------")
+#-----------------------------------------------------
     st.header('No. of Vaccinated People in Countries')
-    st.image('plotImages/people_vacc_line.png', use_column_width=True)
-
+    fig=st.image('plotImages/people_vacc_line.png', use_column_width=True)
+#------------------------------------------
+    save_this_report = st.checkbox("Save Report", key='17')
+    if save_this_report:
+                save_report_form(fig)
+    st.markdown("-------------------------")
+#------------------------------------------
     st.header('Total Vaccinations done in Countries')
-    st.image('plotImages/total_vacc_line.png', use_column_width=True)
-
+    fig=st.image('plotImages/total_vacc_line.png', use_column_width=True)
+    #-------------------------------------
+    save_this_report = st.checkbox("Save Report", key='18')
+    if save_this_report:
+                save_report_form(fig)
+    st.markdown("--------------------")
+#-------------
     st.header('Vaccination done per 100 in Countries')
-    st.image('plotImages/total_per100_line.png', use_column_width=True)
+    fig=st.image('plotImages/total_per100_line.png', use_column_width=True)
+    save_this_report = st.checkbox("Save Report", key='19')
+    if save_this_report:
+                save_report_form(fig)
     st.markdown("-----------------------------")
 
 #-----------------------------------------choice 4-----------------------------------------------
@@ -267,26 +408,76 @@ def vaccineAnalysis():
     st.header('Overall Total Vaccinations')
     data = analysis_cnt.getCountryVaccinations_vaccine(selVaccine)
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations','Country Name', 'No. of Vaccinations'))
-
+#-------------------------------
+    save_this_report = st.checkbox("Save Report", key='20')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("------------------------------")
+#---------------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries','Country Name', 'No. of Vaccinations'), use_container_width=True)
+#--------------------------------------
+    save_this_report = st.checkbox("Save Report", key='21')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
-
+#---------------------------------------------------
     st.header('Total People Vaccinated')
     data = analysis_cnt.getPeopleVaccinated_vaccine(selVaccine)
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated','Country Name', 'No. of Vaccinations'), use_container_width=True)
-
+#----------------------------
+    save_this_report = st.checkbox("Save Report", key='22')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("--------------------------")
+#-------------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+#------------------------------
+    save_this_report = st.checkbox("Save Report", key='23')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
-
+#------------------------------
     st.header('Total Fully Vaccinated People')
     data = analysis_cnt.getPeopleFullyVaccinated_vaccine(selVaccine)
     st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People','Country Name', 'No. of Vaccinations'), use_container_width=True)
-
+#---------------------------
+    save_this_report = st.checkbox("Save Report", key='24')
+    if save_this_report:
+                save_report_form(data)
+    st.markdown("-----------------")
+#---------------------------------------
     st.text("")
     st.plotly_chart(plotChloropeth(data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'), use_container_width=True)
+    save_this_report = st.checkbox("Save Report", key='25')
+    if save_this_report:
+                save_report_form(data)
     st.markdown("---")
+
+#-----------------------------------
+# ---------------------------------------------------VIew REPORT--------------------------------------------
+
+
+def ViewReport():
+    st.header("View Save Reports")
+    reports = sess.query(Report).all()
+    titleslist = [report.title for report in reports]
+    selReport = st.selectbox(options=titleslist, label="Select Report")
+
+    reportToView = sess.query(Report).filter_by(title=selReport).first()
+    # st.header(reportToView.title)
+    # st.text(report)
+
+    markdown = f"""
+        ### Title : {reportToView.title} 
+        ###  Description :{reportToView.desc}
+    """
+    st.markdown(markdown)
+    st.image(reportToView.img_name)
+
+
+
 
 
 #----------------------------------sidebar header----------------------
@@ -309,7 +500,8 @@ with st.spinner("Please Wait for Some Time..."):
         countrywiseAnalysis()
     elif choice == options[4]:
         vaccineAnalysis()
-
+    elif choice == options[5]:
+        ViewReport()
 #---------------------------------------univariate -column- selection---------------------------------# 
 df=pd.read_csv(r'datasets/country.csv',parse_dates=['date'],dayfirst=True,index_col="date",)
 df.drop(['iso_code','vaccines','source_name','source_website'],axis=1,inplace=True)
