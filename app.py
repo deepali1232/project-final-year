@@ -23,18 +23,13 @@ sess=Session()
 
 
 #_______________________________________________Sidebar Report Generation and Save Report___________________________________________________
-#...conti
-current_report = dict().fromkeys(
-    ['title', 'desc', 'img_name', 'save_report'], "")
 
-
+current_report = dict().fromkeys(['title', 'img_name', 'save_report'])
 def generateReport():
     sidebar.header("Save Report")
     current_report['title'] = sidebar.text_input('Report Title')
-    current_report['desc'] = sidebar.text_input('Report Description')
     current_report['img_name'] = sidebar.text_input('Image Name')
     current_report['save_report'] = sidebar.button("Save Report")
-
 
 def save_report_form(fig):
     generateReport()
@@ -44,15 +39,13 @@ def save_report_form(fig):
                 path = 'reports/'+current_report['img_name']+'.png'
                 fig.write_image(path)
                 report = Report(
-                    title=current_report['title'], desc=current_report['desc'], img_name=path)
+                    title=current_report['title'],img_name=path)
                 sess.add(report)
                 sess.commit()
                 st.success('Report Saved')
             except Exception as e:
                 st.error('Something went Wrong')
                 print(e)
-
-
 
 ######---------------------------------->>>>page- setup>>>>>-------------------------------#########
 st.set_page_config(page_title="COVID-19 WORLD VACCINATION PROGRESS VISUALIZATION",page_icon="🏥", layout="wide")
@@ -62,28 +55,23 @@ today=datetime.today()
 d=today.strftime("%B %d,%Y %H:%M:%S")
 sidebar.write(d)
 st.markdown(" ")
-sidebar.markdown("""
-<style> 
+sidebar.markdown("""<style> 
     .sidehead{
         float:right;
-        font-family: Book Antiqua ; 
-        color :white; 
+        font-family: Courgette ,Book Antiqua; 
+        color :yellow; 
         margin-top:-15% !important;
-    }
+            }
     
     h1{
         font-weight:light;
     }
-</style>
-""", unsafe_allow_html=True)
-
+    </style>""", unsafe_allow_html=True)
 
 sidebar.markdown('<h1 class="sidehead"><i>Covid-19 World Vaccination Progress Visualization</i></h1>',unsafe_allow_html=True)
 st.sidebar.image('image/tenor.gif',use_column_width=True)
 
-
 ######--------------------------->>>>>>>>>header>>>>>>>>>>>>>------------------------------#########
-
 with st.spinner("Loading Data..."):
     st.markdown("""
         <style>
@@ -448,9 +436,8 @@ def vaccineAnalysis():
                 save_report_form(data)
     st.markdown("---")
 
-#-----------------------------------
-# ---------------------------------------------------VIew REPORT--------------------------------------------
 
+# ---------------------------------------------------VIew REPORT--------------------------------------------
 
 def ViewReport():
     st.header("View Save Reports")
@@ -463,9 +450,8 @@ def ViewReport():
     # st.text(report)
 
     markdown = f"""
-        ### Title : {reportToView.title} 
-        ###  Description :{reportToView.desc}
-    """
+         ### Title : {reportToView.title} 
+        """
     st.markdown(markdown)
     st.image(reportToView.img_name)
 
@@ -475,14 +461,14 @@ def ViewReport():
 
 #----------------------------------sidebar header----------------------
 
-sidebar.header('Choose Your Option')
-options = ['About Project','View Dataset', 'Analyse Manufacturers','Analyse Country', 'Analyse Country By Vaccine']
-choice = sidebar.selectbox(options=options, label="Choose Action")
+sidebar.header('Choose Your Option👇')
+options = ['About Project','View Dataset', 'Analyse Manufacturers','Analyse Country', 'Analyse Country By Vaccine','View Saved Reports']
+choice = sidebar.selectbox(options=options, label="Choose Action 👇")
 
 with st.spinner("Please Wait for Some Time..."):
     analysis_mnf = Analyse(r"datasets/manufacturer.csv")
     analysis_cnt = Analyse(r"datasets/country.csv")
-    
+   
     if choice == options[0]:
         AboutProject()
     elif choice ==  options[1]:
