@@ -1,3 +1,4 @@
+from matplotlib.collections import BrokenBarHCollection
 import pandas as pd
 
 

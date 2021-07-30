@@ -38,7 +38,7 @@ def generateReport():
 
 def save_report_form(fig):
     generateReport()
-    if current_report['save_report']:
+    if current_report['save_report']:   
         with st.spinner("Saving Report..."):
             try:
                 path = 'reports/'+current_report['img_name']+'.png'
@@ -54,14 +54,7 @@ def save_report_form(fig):
 
 
 
-
-
-
 ######---------------------------------->>>>page- setup>>>>>-------------------------------#########
-
-
-
-
 st.set_page_config(page_title="COVID-19 WORLD VACCINATION PROGRESS VISUALIZATION",page_icon="🏥", layout="wide")
 st.markdown(" ")
 sidebar=st.sidebar
