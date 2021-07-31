@@ -17,7 +17,7 @@ from visualization import *
 from AnalyseData import Analyse
 from PIL import Image
 import PIL
-
+import os
 #--------------------------------------database connection--------------------------------------------------
 
 engine=create_engine('sqlite:///db.sqlite3')            
@@ -508,7 +508,7 @@ def ViewReport():
          ### Title : {reportToView.title} 
         """
     st.markdown(markdown)
-    st.image(reportToView.img_name)
+    st.image(reportToView.data)
 
 
 
