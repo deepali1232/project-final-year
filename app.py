@@ -68,17 +68,10 @@ def save_report_form(fig):
             try:
                 path = 'reports/'+current_report['img_name']+'.png'
                 fig.write_image(path)
-<<<<<<< HEAD
                 report = Report(
                     title=current_report['title'],data=path)
                 sess.add(report)
                 sess.commit()
-=======
-               # report = Report(
-                #    title=current_report['title'],img_name=path)
-                  #  sess.add(report)
-                 #   sess.commit()
->>>>>>> 8c4cf3b789257e59807cda634a8030b9b9069e6e
                 st.success('Report Saved')
             except Exception as e:
                 st.error('Something went Wrong')
