@@ -554,7 +554,7 @@ if st.sidebar.checkbox('Univariate analysis '):
           'daily_vaccinations_per_million']
 
     col=st.sidebar.selectbox("select a column ",cols)
-    range=st.sidebar.selectbox("select a range to display",['D','3D','W','2W','M','2M'])
+    range=st.sidebar.selectbox("select a range to display",['D','3D','W','2W','M',])
     st.markdown(" ")
     st.header("Univariate analysis ( change over time ) 👇")
 
